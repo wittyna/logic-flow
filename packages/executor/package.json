@@ -1,0 +1,17 @@
+{
+  "name": "@isc-logic-flow/executor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@isc-logic-flow/types": "workspace:*"
+  },
+  "pureDependencies": {
+    "react": ">16",
+    "react-dom": ">16"
+  }
+}
