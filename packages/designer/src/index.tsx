@@ -2,7 +2,7 @@ import {forwardRef} from "react";
 import {SchemaBlock} from "@isc-logic-flow/types/src/Schema.ts";
 import {MetaNode} from "@isc-logic-flow/types/src/Meta.ts";
 
-export const LogicFlowDesigner = forwardRef<{
+export const DiagramDesigner = forwardRef<{
   exportSchema: () => SchemaBlock;
   importSchema: (schema: SchemaBlock) => void;
 }, {

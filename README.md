@@ -2,6 +2,6 @@
 
 ## 启动
 ```bash
-npm install
+pnpm install
 npm run dev
 ```
