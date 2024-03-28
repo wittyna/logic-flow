@@ -6,7 +6,7 @@
   "main": "src/metas.ts",
   "scripts": {},
   "keywords": [],
-  "author": "",
+  "author": "baixy",
   "license": "ISC",
   "dependencies": {
     "@isc-logic-flow/types": "workspace:*"

@@ -5,7 +5,7 @@
   "main": "src/index.tsx",
   "scripts": {},
   "keywords": [],
-  "author": "",
+  "author": "baixy",
   "license": "ISC",
   "dependencies": {
     "@isc-logic-flow/types": "workspace:*",

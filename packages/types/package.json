@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {},
   "keywords": [],
-  "author": "",
+  "author": "baixy",
   "license": "ISC",
   "dependencies": {
     "antd": "^5.15.4"
