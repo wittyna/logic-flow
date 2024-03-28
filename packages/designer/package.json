@@ -8,7 +8,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@isc-logic-flow/types": "workspace:*"
+    "@isc-logic-flow/types": "workspace:*",
+    "antd": "^5",
+    "@ant-design/icons": "^4"
   },
   "pureDependencies": {
     "react": ">16",

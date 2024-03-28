@@ -1,12 +1,13 @@
 import {MetaNode} from "@isc-logic-flow/types";
 
 export const end: MetaNode = {
-  name: 'end',
+  name: "end",
   title: "结束",
+
   props: [{
-    name: 'returnValue',
-    title: '返回值',
-    setter: 'string'
+    name: "returnValue",
+    title: "返回值",
+    setter: "JsExpression"
   }],
   isEnd: true,
   compiler: ({props}, _, value2Exp) => {

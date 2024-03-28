@@ -12,6 +12,7 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "antd": "^5.15.4",
     "@isc-logic-flow/types": "workspace:*",
     "@isc-logic-flow/node-metas": "workspace:*",
     "@isc-logic-flow/executor": "workspace:*",

@@ -1,20 +1,23 @@
 import {MetaNode} from "@isc-logic-flow/types";
 
 export const start: MetaNode = {
-  name: 'start',
+  name: "start",
   title: "开始",
+
   props: [{
-    name: 'vars',
-    title: '变量定义',
+    name: "vars",
+    title: "变量定义",
     setter: {
-      component: 'arraySetter',
+      component: "Array",
       props: {
         columns: [{
-          label: "变量名",
-          prop: "name"
+          title: "变量名",
+          name: "name",
+          setter: "String"
         }, {
-          label: "初始值",
-          prop: "value"
+          title: "初始值",
+          name: "value",
+          setter: "JsExpression"
         }]
       }
     }
@@ -33,6 +36,6 @@ export const start: MetaNode = {
       }[]
     }).vars.reduce((previousValue, currentValue, currentIndex, array) => {
       return `${previousValue}${currentValue.name}=${value2Exp(currentValue.value)};${currentIndex !== array.length - 1 ? "\n" : ""}`
-    }, '')
+    }, "")
   }
 }

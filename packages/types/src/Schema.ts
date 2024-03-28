@@ -1,13 +1,13 @@
-export interface SchemaBlock {
-  id: string;
-  nodes: SchemaNode[];
+import {type TreeDataNode} from "antd";
+
+export interface SchemaBlock extends TreeDataNode {
+  children: SchemaNode[];
 }
 
-export interface SchemaNode {
-  id: string;
-  name: string;
+export interface SchemaNode extends TreeDataNode {
+  nodeName: string;
   props: SchemaNodeProps;
-  blocks: SchemaBlock[];
+  children: SchemaBlock[];
 }
 
 export type SchemaValueBase = string | number | boolean | SchemaSpecialValue;

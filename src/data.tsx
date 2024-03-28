@@ -1,95 +1,111 @@
 import {SchemaBlock} from "@isc-logic-flow/types";
 
 export const demoSchema: SchemaBlock = {
-  id: 'root',
-  nodes: [
+  key: "root",
+  children: [
     {
-      id: 'start',
-      name: 'start',
+      key: "start",
+      title: "start",
+      nodeName: "start",
       props: {
-        vars: [{name: 'arr', value: {type: 'JSExpression', value: '[1, 2, 3, 4]'}}, {name: 'total', value: {type: 'JSExpression', value: '0'}}],
+        vars: [{name: "arr", value: {type: "JSExpression", value: "[1, 2, 3, 4]"}}, {
+          name: "total",
+          value: {type: "JSExpression", value: "0"}
+        }],
       },
-      blocks: [],
+      children: [],
     },
     {
-      id: 'loop',
-      name: 'loop',
+      key: "loop",
+      nodeName: "loop",
+      title: "loop",
       props: {
-        array: {type: 'JSExpression', value: 'arr'},
-        item: 'item',
-        index: 'index'
+        array: {type: "JSExpression", value: "arr"},
+        item: "item",
+        index: "index"
       },
-      blocks: [{
-        id: 'loopBlock',
-        nodes: [
+      children: [{
+        key: "loopBlock",
+        title: "loopBlock",
+        children: [
           {
-            id: "loop2",
-            name: "loop",
+            key: "loop2",
+            nodeName: "loop",
+            title: "loop",
             props: {
-              array: {type: 'JSExpression', value: 'arr'},
-              item: 'item2',
-              index: 'index2'
+              array: {type: "JSExpression", value: "arr"},
+              item: "item2",
+              index: "index2"
             },
-            blocks: [{
-              id: 'loopBlock2',
-              nodes: [{
-                id: 'log2222',
-                name: 'code',
+            children: [{
+              key: "loopBlock2",
+              title: "loopBlock",
+              children: [{
+                key: "log2222",
+                title: "code",
+                nodeName: "code",
                 props: {
-                  code: 'console.log(123123123)'
+                  code: "console.log(123123123)"
                 },
-                blocks: []
+                children: []
               }]
             }]
           },
           {
-            id: 'condition',
-            name: 'condition',
+            key: "condition",
+            nodeName: "condition",
+            title: "condition",
             props: {
-              exp: {type: 'JSExpression', value: 'index % 2 === 0'}
+              exp: {type: "JSExpression", value: "index % 2 === 0"}
             },
-            blocks: [{
-              id: 'ifBlock',
-              nodes: [{
-                id: 'log1',
-                name: 'code',
+            children: [{
+              key: "ifBlock",
+              title: "if",
+              children: [{
+                key: "log1",
+                nodeName: "code",
+                title: "code",
                 props: {
-                  code: 'console.info("index:" + index + ", item:" + item)'
+                  code: "console.info(\"index:\" + index + \", item:\" + item)"
                 },
-                blocks: []
+                children: []
               }]
             }, {
-              id: 'elseBlock',
-              nodes: [{
-                id: 'log2',
-                name: 'code',
+              key: "elseBlock",
+              title: "else",
+              children: [{
+                key: "log2",
+                nodeName: "code",
+                title: "code",
                 props: {
-                  code: 'console.warn("index:" + index + ", item:" + item)'
+                  code: "console.warn(\"index:\" + index + \", item:\" + item)"
                 },
-                blocks: []
+                children: []
               }],
             }],
           }, {
-            id: 'add',
-            name: 'code',
+            key: "add",
+            nodeName: "code",
+            title: "code",
             props: {
-              code: 'total += item'
+              code: "total += item"
             },
-            blocks: []
+            children: []
           }
-        ]
-      }],
+        ],
+      }]
     },
     {
-      id: 'end',
-      name: 'end',
+      key: "end",
+      nodeName: "end",
+      title: "end",
       props: {
         returnValue: {
-          type: 'JSExpression',
-          value: 'total'
+          type: "JSExpression",
+          value: "total"
         }
       },
-      blocks: [],
+      children: [],
     }
   ]
 }
