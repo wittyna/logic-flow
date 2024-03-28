@@ -9,7 +9,7 @@ export function value2exp(value: SchemaValue) {
     }
     return v
   }
-  return `${JSON.stringify(value)}`;
+  return `${value || ""}`;
 }
 
 function addStrEveryLine(code: string, str: string) {

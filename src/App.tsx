@@ -2,7 +2,7 @@ import {TreeDesigner} from "@isc-logic-flow/designer";
 import {blockCompiler} from "@isc-logic-flow/compiler";
 import {executor} from "@isc-logic-flow/executor";
 import * as metaNodes from "@isc-logic-flow/node-metas";
-import {demoSchema} from "./data.tsx";
+// import {demoSchema} from "./data.tsx";
 import {Button, Tag} from "antd";
 import {useRef, useState} from "react";
 import {SchemaBlock} from "@isc-logic-flow/types";
@@ -20,7 +20,7 @@ function App() {
         setSource(blockCompiler(schema, metaNodes))
       }}>编译</Button></div>
       <div style={{height: "calc(50% - 25px)"}}>
-        <TreeDesigner ref={ref} metas={metaNodes} initialSchema={demoSchema}>
+        <TreeDesigner ref={ref} metas={metaNodes}>
         </TreeDesigner>
       </div>
       <div style={{height: "calc(50% - 25px)"}}>

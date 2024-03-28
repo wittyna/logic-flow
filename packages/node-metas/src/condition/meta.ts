@@ -7,7 +7,7 @@ export const condition: MetaNode = {
   props: [{
     name: "exp",
     title: "条件表达式",
-    setter: "JsExpression"
+    setter: "JSExpression"
   }],
   initialChildren() {
     return [

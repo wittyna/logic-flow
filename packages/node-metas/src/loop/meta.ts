@@ -7,7 +7,7 @@ export const loop: MetaNode = {
   props: [{
     name: "array",
     title: "循环数组",
-    setter: "JsExpression"
+    setter: "JSExpression"
   }, {
     name: "item",
     title: "item变量名",

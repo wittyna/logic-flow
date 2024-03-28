@@ -7,7 +7,7 @@ export const end: MetaNode = {
   props: [{
     name: "returnValue",
     title: "返回值",
-    setter: "JsExpression"
+    setter: "JSExpression"
   }],
   isEnd: true,
   compiler: ({props}, _, value2Exp) => {

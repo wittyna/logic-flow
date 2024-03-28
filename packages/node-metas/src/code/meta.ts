@@ -6,13 +6,27 @@ export const code: MetaNode = {
   props: [{
     name: "code",
     title: "代码",
-    setter: "String"
+    setter: "JSExpression"
   }, {
     name: "await",
     title: "await",
     setter: "Boolean"
   }],
-  compiler: ({props = {}}) => {
-    return `${props.await ? "await" : ""} ${props.code};`;
+  initialChildren() {
+    return [{
+      key: Math.random().toString(),
+      title: "运行错误情况",
+      children: []
+    }]
+  },
+  compiler: ({props = {}, children}, compiler, value2Exp) => {
+    if (children?.[0]?.children?.length) {
+      return `try {
+  ${props.await ? "await" : " "}${value2Exp(props.code)};
+    } catch (e) {
+${compiler(children[0])}
+}`
+    }
+    return `${props.await ? "await" : " "}${value2Exp(props.code)};`;
   }
 }

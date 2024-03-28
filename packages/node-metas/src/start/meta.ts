@@ -17,7 +17,7 @@ export const start: MetaNode = {
         }, {
           title: "初始值",
           name: "value",
-          setter: "JsExpression"
+          setter: "JSExpression"
         }]
       }
     }
@@ -35,6 +35,7 @@ export const start: MetaNode = {
         value: string
       }[]
     }).vars.reduce((previousValue, currentValue, currentIndex, array) => {
+      console.log(currentValue, 111)
       return `${previousValue}${currentValue.name}=${value2Exp(currentValue.value)};${currentIndex !== array.length - 1 ? "\n" : ""}`
     }, "")
   }

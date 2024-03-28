@@ -89,6 +89,7 @@ export const TreeDesigner = forwardRef<{
             } else {
               parent.children.push(newNode)
             }
+            setSchema({...schema})
             setKey(key + 1)
           }
         }
@@ -121,6 +122,7 @@ export const TreeDesigner = forwardRef<{
           <Button type={"text"} style={{marginBottom: 8}} size={"small"} onClick={() => {
             const parent = schemaKey2Parent[node.key as string] as SchemaBlock
             parent.children = parent.children.filter(one => one.key !== node.key)
+            setSchema({...schema})
             setKey(key + 1)
           }} danger>删除</Button>
         </div>
@@ -129,7 +131,8 @@ export const TreeDesigner = forwardRef<{
     </div>
     <div style={{flex: 1, borderLeft: "1px solid #ddd", padding: 8}}>
       {selectedNode ?
-        <MetaForm nodeMeta={metas[selectedNode.nodeName]} nodeKey={selectedNode.nodeName} value={selectedNode.props}
+        <MetaForm key={selectedNode.key} nodeMeta={metas[selectedNode.nodeName]} nodeKey={selectedNode.nodeName}
+                  value={selectedNode.props}
                   onChange={value => {
                     (schemaKey2Node[selectedNode.key as string] as SchemaNode).props = value
                   }}></MetaForm> : null}

@@ -7,13 +7,19 @@ export function getInitSchema(): SchemaBlock {
       {
         key: "start",
         nodeName: "start",
-        props: {},
+        title: "开始",
+        props: {
+          vars: []
+        },
         children: [],
       },
       {
         key: "end",
+        title: "结束",
         nodeName: "end",
-        props: {},
+        props: {
+          vars: []
+        },
         children: [],
       }
     ]
