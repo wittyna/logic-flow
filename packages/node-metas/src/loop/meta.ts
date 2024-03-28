@@ -18,7 +18,11 @@ export const loop: MetaNode = {
     setter: "String"
   }],
   initialChildren() {
-    return []
+    return [{
+      key: Math.random().toString(),
+      title: "循环体",
+      children: []
+    }]
   },
   initialProps() {
     return {

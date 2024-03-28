@@ -1,6 +1,6 @@
 import {type ReactElement, type ComponentType} from "React";
 import {RuntimeNodeProps} from "./Runtime.ts";
-import {SchemaNode, SchemaNodeProps, SchemaValue} from "./Schema.ts";
+import {SchemaBlock, SchemaNode, SchemaNodeProps, SchemaValue} from "./Schema.ts";
 import {InnerBlockCompiler} from "./Compiler.ts";
 
 export interface MetaNode {
@@ -13,9 +13,7 @@ export interface MetaNode {
   compiler: (schemaNode: SchemaNode, compiler: InnerBlockCompiler, value2Exp: (schemaValue: SchemaValue) => string) => string;
   isStart?: boolean;
   isEnd?: boolean;
-  initialChildren?: ((props: RuntimeNodeProps) => {
-    nodes: SchemaNode[]
-  }[]);
+  initialChildren?: ((props: RuntimeNodeProps) => SchemaBlock[]);
   blocksEndNode?: MetaNode;
 }
 

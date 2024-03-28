@@ -7,8 +7,12 @@ export const code: MetaNode = {
     name: "code",
     title: "代码",
     setter: "String"
+  }, {
+    name: "await",
+    title: "await",
+    setter: "Boolean"
   }],
   compiler: ({props = {}}) => {
-    return "await " + props.code + ";";
+    return `${props.await ? "await" : ""} ${props.code};`;
   }
 }

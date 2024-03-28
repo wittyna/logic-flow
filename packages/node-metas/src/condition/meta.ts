@@ -3,14 +3,23 @@ import {MetaNode, SchemaBlock} from "@isc-logic-flow/types";
 export const condition: MetaNode = {
   name: "condition",
   title: "条件",
-  
+
   props: [{
     name: "exp",
     title: "条件表达式",
     setter: "JsExpression"
   }],
   initialChildren() {
-    return [{nodes: []}, {nodes: []}]
+    return [
+      {
+        key: Math.random().toString(),
+        title: "if", children: []
+      },
+      {
+        key: Math.random().toString(),
+        title: "else",
+        children: []
+      }]
   },
   compiler: ({props = {}, children}, innerBlockCompiler, value2Exp) => {
     return `if (${value2Exp(props!.exp)}){

@@ -1,5 +1,6 @@
 import {TreeDesigner} from "@isc-logic-flow/designer";
 import {blockCompiler} from "@isc-logic-flow/compiler";
+import {executor} from "@isc-logic-flow/executor";
 import * as metaNodes from "@isc-logic-flow/node-metas";
 import {demoSchema} from "./data.tsx";
 import {Button, Tag} from "antd";
@@ -24,6 +25,7 @@ function App() {
       </div>
       <div style={{height: "calc(50% - 25px)"}}>
         <div><Tag>编译后代码</Tag></div>
+        <Button onClick={() => executor(source)} style={{marginTop: "12px"}}>运行</Button>
         <pre>{source}</pre>
       </div>
     </div>

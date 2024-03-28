@@ -5,7 +5,7 @@ export const demoSchema: SchemaBlock = {
   children: [
     {
       key: "start",
-      title: "start",
+      title: "开始",
       nodeName: "start",
       props: {
         vars: [{name: "arr", value: {type: "JSExpression", value: "[1, 2, 3, 4]"}}, {
@@ -18,7 +18,7 @@ export const demoSchema: SchemaBlock = {
     {
       key: "loop",
       nodeName: "loop",
-      title: "loop",
+      title: "循环",
       props: {
         array: {type: "JSExpression", value: "arr"},
         item: "item",
@@ -26,35 +26,12 @@ export const demoSchema: SchemaBlock = {
       },
       children: [{
         key: "loopBlock",
-        title: "loopBlock",
+        title: "循环体",
         children: [
-          {
-            key: "loop2",
-            nodeName: "loop",
-            title: "loop",
-            props: {
-              array: {type: "JSExpression", value: "arr"},
-              item: "item2",
-              index: "index2"
-            },
-            children: [{
-              key: "loopBlock2",
-              title: "loopBlock",
-              children: [{
-                key: "log2222",
-                title: "code",
-                nodeName: "code",
-                props: {
-                  code: "console.log(123123123)"
-                },
-                children: []
-              }]
-            }]
-          },
           {
             key: "condition",
             nodeName: "condition",
-            title: "condition",
+            title: "条件",
             props: {
               exp: {type: "JSExpression", value: "index % 2 === 0"}
             },
@@ -64,7 +41,7 @@ export const demoSchema: SchemaBlock = {
               children: [{
                 key: "log1",
                 nodeName: "code",
-                title: "code",
+                title: "代码",
                 props: {
                   code: "console.info(\"index:\" + index + \", item:\" + item)"
                 },
@@ -76,7 +53,7 @@ export const demoSchema: SchemaBlock = {
               children: [{
                 key: "log2",
                 nodeName: "code",
-                title: "code",
+                title: "代码",
                 props: {
                   code: "console.warn(\"index:\" + index + \", item:\" + item)"
                 },
@@ -86,7 +63,7 @@ export const demoSchema: SchemaBlock = {
           }, {
             key: "add",
             nodeName: "code",
-            title: "code",
+            title: "代码",
             props: {
               code: "total += item"
             },
@@ -98,7 +75,7 @@ export const demoSchema: SchemaBlock = {
     {
       key: "end",
       nodeName: "end",
-      title: "end",
+      title: "结束",
       props: {
         returnValue: {
           type: "JSExpression",
