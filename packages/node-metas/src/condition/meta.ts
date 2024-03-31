@@ -1,4 +1,6 @@
 import {MetaNode, SchemaBlock} from "@isc-logic-flow/types";
+import {v1 as uuid} from "uuid"
+
 
 export const condition: MetaNode = {
   name: "condition",
@@ -12,18 +14,18 @@ export const condition: MetaNode = {
   initialChildren() {
     return [
       {
-        key: Math.random().toString(),
+        key: uuid(),
         title: "if", children: []
       },
       {
-        key: Math.random().toString(),
+        key: uuid(),
         title: "else",
         children: []
       }]
   },
   compiler: ({props = {}, children}, innerBlockCompiler, value2Exp) => {
     return `if (${value2Exp(props!.exp)}){
-  ${innerBlockCompiler(children![0] as SchemaBlock)} 
+  ${innerBlockCompiler(children![0] as SchemaBlock)}
 } else {
   ${innerBlockCompiler(children![1] as SchemaBlock)}
 }`

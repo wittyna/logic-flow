@@ -10,7 +10,9 @@
   "dependencies": {
     "@isc-logic-flow/types": "workspace:*",
     "antd": "^5",
-    "@ant-design/icons": "^4"
+    "@ant-design/icons": "^4",
+    "uuid": "^8.3.2",
+    "@types/uuid": "^8.3.2"
   },
   "pureDependencies": {
     "react": ">16",

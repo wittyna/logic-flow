@@ -1,4 +1,5 @@
 import {MetaNode} from "@isc-logic-flow/types";
+import {v1 as uuid} from "uuid"
 
 export const loop: MetaNode = {
   name: "loop",
@@ -19,7 +20,7 @@ export const loop: MetaNode = {
   }],
   initialChildren() {
     return [{
-      key: Math.random().toString(),
+      key: uuid(),
       title: "循环体",
       children: []
     }]

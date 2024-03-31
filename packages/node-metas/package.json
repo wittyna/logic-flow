@@ -9,7 +9,9 @@
   "author": "baixy",
   "license": "ISC",
   "dependencies": {
-    "@isc-logic-flow/types": "workspace:*"
+    "@isc-logic-flow/types": "workspace:*",
+    "uuid": "^8.3.2",
+    "@types/uuid": "^8.3.2"
   },
   "pureDependencies": {
     "react": ">16",

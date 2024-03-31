@@ -1,4 +1,5 @@
 import {MetaNode} from "@isc-logic-flow/types";
+import {v1 as uuid} from "uuid"
 
 export const code: MetaNode = {
   name: "code",
@@ -14,19 +15,19 @@ export const code: MetaNode = {
   }],
   initialChildren() {
     return [{
-      key: Math.random().toString(),
-      title: "运行错误情况",
+      key: uuid(),
+      title: "错误捕捉",
       children: []
     }]
   },
   compiler: ({props = {}, children}, compiler, value2Exp) => {
     if (children?.[0]?.children?.length) {
       return `try {
-  ${props.await ? "await" : " "}${value2Exp(props.code)};
-    } catch (e) {
+  ${props.await ? "await " : " "}${value2Exp(props.code)};
+} catch (e) {
 ${compiler(children[0])}
 }`
     }
-    return `${props.await ? "await" : " "}${value2Exp(props.code)};`;
+    return `${props.await ? "await " : ""}${value2Exp(props.code)};`;
   }
 }

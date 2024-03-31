@@ -17,7 +17,7 @@ export const MetaForm: FC<{
     {nodeMeta.props.map(prop => {
       const Setter = typeof prop.setter === "string" ? setters[prop.setter as SetterName] : typeof prop.setter.component === "string" ? setters[prop.setter.component as SetterName] : prop.setter.component as ComponentType
       const SetterProps = typeof prop.setter === "string" ? {} : prop.setter.props
-      return <Form.Item label={prop.title} name={prop.name}>
+      return <Form.Item key={prop.name} label={prop.title} name={prop.name}>
         <Setter {...SetterProps}/>
       </Form.Item>
     })}

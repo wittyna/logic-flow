@@ -3,7 +3,6 @@ import {MetaNode} from "@isc-logic-flow/types";
 export const end: MetaNode = {
   name: "end",
   title: "结束",
-
   props: [{
     name: "returnValue",
     title: "返回值",

@@ -4,7 +4,9 @@ import {MetaNode} from "@isc-logic-flow/types/src/Meta.ts";
 import {getInitSchema} from "./initSchema.ts";
 import {Button, Dropdown, MenuProps, Tree, TreeDataNode} from "antd";
 import {MetaForm} from "./MetaForm";
-
+import {v1 as uuid} from "uuid"
+import {executor} from "@isc-logic-flow/executor";
+import {compiler} from "@isc-logic-flow/compiler";
 
 export interface DesignerContextType {
   metas: Record<string, MetaNode>;
@@ -14,10 +16,29 @@ export const DesignerContext = createContext<DesignerContextType>({
   metas: {}
 })
 
-export const TreeDesigner = forwardRef<{
+function isBlock(node: TreeDataNode) {
+  return node && (node as SchemaNode)?.nodeName === undefined
+}
+
+function isNode(node: TreeDataNode) {
+  return node && !isBlock(node)
+}
+
+export interface DebugObj {
+  next: () => Promise<{
+    done: boolean;
+    value: string;
+  }>;
+  stop: () => void;
+}
+
+export interface TreeDesignerRef {
   exportSchema: () => SchemaBlock;
   importSchema: (schema: SchemaBlock) => void;
-}, {
+  startDebugger: () => DebugObj;
+}
+
+export const TreeDesigner = forwardRef<TreeDesignerRef, {
   metas: Record<string, MetaNode>;
   initialSchema?: SchemaBlock;
 }>(({metas, initialSchema = getInitSchema()}, ref) => {
@@ -58,7 +79,9 @@ export const TreeDesigner = forwardRef<{
 
   }, [schema]);
 
-  const [selectedNode, setSelectedNode] = useState<SchemaNode>()
+  const [selectedNode, setSelectedNode] = useState<SchemaNode | null>(null)
+  const [currentDebugNodeKey, setCurrentDebugNodeKey] = useState("")
+  const [debugObj, setDebugObj] = useState<DebugObj | null>(null)
   useImperativeHandle(ref, () => {
     return {
       exportSchema: () => {
@@ -66,41 +89,62 @@ export const TreeDesigner = forwardRef<{
       },
       importSchema: (schema: SchemaBlock) => {
         setSchema(schema)
+      },
+      startDebugger: () => {
+        if (debugObj) {
+          return debugObj
+        }
+        const debugObj_: DebugObj = executor(compiler(schema, metas, true), {}, [], true)
+        setDebugObj(debugObj_)
+        return {
+          async next() {
+            const {done, value} = await debugObj_.next()
+            if (done) {
+              setCurrentDebugNodeKey("")
+              setDebugObj(null)
+            } else {
+              setCurrentDebugNodeKey(value)
+            }
+            return {done, value}
+          },
+          stop() {
+            setCurrentDebugNodeKey("")
+            setDebugObj(null)
+          }
+        }
       }
     }
-  }, [schema])
+  }, [schema, debugObj])
   const createNewNodeButton = (parent: SchemaBlock) => {
     return <Dropdown menu={{
-      items: Object.values(metas).filter(one => !["start", "end"].includes(one.name)).map((meta) => {
+      items: Object.values(metas).map((meta) => {
         return {
           key: meta.name,
           label: meta.title,
           onClick: () => {
             const props = meta.initialProps?.() || {}
             const newNode: SchemaNode = {
-              key: Math.random().toString(),
+              key: uuid(),
               title: <>{meta.title}</>,
               nodeName: meta.name,
               props,
               children: meta.initialChildren?.(props) || []
             }
-            if (parent.key === "root") {
-              parent.children.splice(-1, 0, newNode)
-            } else {
-              parent.children.push(newNode)
-            }
+            parent.children.push(newNode)
             setSchema({...schema})
             setKey(key + 1)
           }
         }
       }) as MenuProps["items"]
     }}>
-      <Button type={"link"} style={{marginBottom: 8}} size={"small"}>新增</Button>
+      <Button type={"link"} onClick={e => {
+        e.stopPropagation()
+      }} size={"small"}>新增</Button>
     </Dropdown>
   }
   return <div style={{display: "flex", border: "1px solid #ddd", height: "100%", padding: 8, boxSizing: "border-box"}}>
     <div style={{height: "100%", overflowY: "auto"}}>
-      {createNewNodeButton(schema)}
+      {!debugObj ? createNewNodeButton(schema) : null}
       <Tree
         key={key}
         style={{width: 300}}
@@ -109,33 +153,102 @@ export const TreeDesigner = forwardRef<{
           setExpandedKeys(keys)
         }}
         treeData={schema.children as unknown as TreeDataNode[]}
+        draggable={(node) => {
+          return !debugObj && isNode(node)
+        }}
+        allowDrop={({dropNode}) => {
+          return isBlock(dropNode)
+        }}
+        onDrop={(info) => {
+          const dropKey = info.node.key;
+          const dragKey = info.dragNode.key;
+          const dropPos = info.node.pos.split("-");
+          const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]); // the drop position relative to the drop node, inside 0, top -1, bottom 1
+
+          const loop = (
+            data: TreeDataNode[],
+            key: React.Key,
+            callback: (node: TreeDataNode, i: number, data: TreeDataNode[]) => void,
+          ) => {
+            for (let i = 0; i < data.length; i++) {
+              if (data[i].key === key) {
+                return callback(data[i], i, data);
+              }
+              if (data[i].children) {
+                loop(data[i].children!, key, callback);
+              }
+            }
+          };
+          const data = [...schema.children];
+
+          // Find dragObject
+          let dragObj: TreeDataNode;
+          loop(data, dragKey, (item, index, arr) => {
+            arr.splice(index, 1);
+            dragObj = item;
+          });
+
+          if (!info.dropToGap) {
+            // Drop on the content
+            loop(data, dropKey, (item) => {
+              item.children = item.children || [];
+              // where to insert. New item was inserted to the start of the array in this example, but can be anywhere
+              item.children.unshift(dragObj);
+            });
+          } else {
+            let ar: TreeDataNode[] = [];
+            let i: number;
+            loop(data, dropKey, (_item, index, arr) => {
+              ar = arr;
+              i = index;
+            });
+            if (dropPosition === -1) {
+              // Drop on the top of the drop node
+              ar.splice(i!, 0, dragObj!);
+            } else {
+              // Drop on the bottom of the drop node
+              ar.splice(i! + 1, 0, dragObj!);
+            }
+          }
+          setSchema({...schema, children: [...data]});
+        }}
         selectedKeys={selectedNode?.key ? [selectedNode.key] : []}
         onSelect={(_, {node}) => {
           // 必须是SchemaNode才能编辑
-          if ((node as unknown as SchemaNode).nodeName) {
+          if (isNode(node)) {
             setSelectedNode(node as unknown as SchemaNode)
           }
         }} titleRender={(node) => {
-        return <div>
+        return <div style={{color: isNode(node) ? "unset" : "#999", display: "flex", alignItems: "center"}}>
+          {currentDebugNodeKey === node.key ?
+            <div style={{width: 10, height: 10, borderRadius: 5, background: "red", marginRight: 4}}></div> : null}
           <span>{(node.title || (node as unknown as { name: string }).name) as string}</span>
-          {!(node as SchemaNode).nodeName ? createNewNodeButton(schemaKey2Node[node.key as string] as SchemaBlock) : null}
-          <Button type={"text"} style={{marginBottom: 8}} size={"small"} onClick={() => {
-            const parent = schemaKey2Parent[node.key as string] as SchemaBlock
-            parent.children = parent.children.filter(one => one.key !== node.key)
-            setSchema({...schema})
-            setKey(key + 1)
-          }} danger>删除</Button>
+          {!debugObj ? isBlock(node) ? createNewNodeButton(schemaKey2Node[node.key as string] as SchemaBlock) :
+            <Button type={"text"} size={"small"} onClick={(event) => {
+              event.stopPropagation()
+              const parent = schemaKey2Parent[node.key as string] as SchemaBlock
+              parent.children = parent.children.filter(one => one.key !== node.key)
+              setSchema({...schema})
+              if (node.key === selectedNode?.key) {
+                setSelectedNode(null)
+              }
+              setKey(key + 1)
+            }} danger>删除</Button> : null}
+
         </div>
-      }}>
+      }
+      }>
       </Tree>
     </div>
     <div style={{flex: 1, borderLeft: "1px solid #ddd", padding: 8}}>
       {selectedNode ?
-        <MetaForm key={selectedNode.key} nodeMeta={metas[selectedNode.nodeName]} nodeKey={selectedNode.nodeName}
+        <MetaForm key={selectedNode?.key || 0} nodeMeta={metas[selectedNode.nodeName]} nodeKey={selectedNode.nodeName}
                   value={selectedNode.props}
                   onChange={value => {
                     (schemaKey2Node[selectedNode.key as string] as SchemaNode).props = value
-                  }}></MetaForm> : null}
+                  }}>
+
+        </MetaForm> : null}
     </div>
   </div>
 })
