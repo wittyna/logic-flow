@@ -101,6 +101,18 @@ export const demoSchema: SchemaBlock = {
           ]
         }
       ]
+    },
+    {
+      "key": "ae59e7c0-ef6f-11ee-8406-6f229ab61fa9",
+      "title": "结束",
+      "nodeName": "end",
+      "props": {
+        "returnValue": {
+          "type": "JSExpression",
+          "value": "\"hellow word\""
+        }
+      },
+      "children": []
     }
   ]
 }

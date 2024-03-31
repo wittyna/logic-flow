@@ -1,4 +1,4 @@
-import {createContext, forwardRef, useImperativeHandle, useMemo, useState} from "react";
+import {createContext, forwardRef, useImperativeHandle, useMemo, useRef, useState} from "react";
 import {SchemaBlock, SchemaNode} from "@isc-logic-flow/types/src/Schema.ts";
 import {MetaNode} from "@isc-logic-flow/types/src/Meta.ts";
 import {getInitSchema} from "./initSchema.ts";
@@ -7,6 +7,7 @@ import {MetaForm} from "./MetaForm";
 import {v1 as uuid} from "uuid"
 import {executor} from "@isc-logic-flow/executor";
 import {compiler} from "@isc-logic-flow/compiler";
+import {Logs, LogsRef} from "./Logs.tsx";
 
 export interface DesignerContextType {
   metas: Record<string, MetaNode>;
@@ -46,7 +47,19 @@ export const TreeDesigner = forwardRef<TreeDesignerRef, {
     return initialSchema
   })
   const [key, setKey] = useState(0)
-  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>(() => {
+    const res: React.Key[] = []
+
+    function walk(node: SchemaNode | SchemaBlock) {
+      res.push(node.key as string)
+      if (node.children) {
+        node.children.forEach(walk)
+      }
+    }
+
+    walk(schema)
+    return res
+  });
   const schemaKey2Node = useMemo(() => {
     const res: Record<string, SchemaNode | SchemaBlock> = {}
 
@@ -82,6 +95,7 @@ export const TreeDesigner = forwardRef<TreeDesignerRef, {
   const [selectedNode, setSelectedNode] = useState<SchemaNode | null>(null)
   const [currentDebugNodeKey, setCurrentDebugNodeKey] = useState("")
   const [debugObj, setDebugObj] = useState<DebugObj | null>(null)
+  const logsRef = useRef<LogsRef>(null)
   useImperativeHandle(ref, () => {
     return {
       exportSchema: () => {
@@ -94,7 +108,13 @@ export const TreeDesigner = forwardRef<TreeDesignerRef, {
         if (debugObj) {
           return debugObj
         }
-        const debugObj_: DebugObj = executor(compiler(schema, metas, true), {}, [], true)
+        const debugObj_: DebugObj = executor(compiler(schema, metas, true), {
+          console: {
+            log: (str: string) => {
+              logsRef.current?.log(str)
+            }
+          }
+        }, [], true)
         setDebugObj(debugObj_)
         return {
           async next() {
@@ -241,7 +261,7 @@ export const TreeDesigner = forwardRef<TreeDesignerRef, {
       </Tree>
     </div>
     <div style={{flex: 1, borderLeft: "1px solid #ddd", padding: 8}}>
-      {selectedNode ?
+      {debugObj ? <Logs ref={logsRef}></Logs> : selectedNode ?
         <MetaForm key={selectedNode?.key || 0} nodeMeta={metas[selectedNode.nodeName]} nodeKey={selectedNode.nodeName}
                   value={selectedNode.props}
                   onChange={value => {
