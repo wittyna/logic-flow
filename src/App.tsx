@@ -1,21 +1,29 @@
 import {DebugObj, TreeDesigner, TreeDesignerRef} from "@isc-logic-flow/designer";
 import {compiler} from "@isc-logic-flow/compiler";
-import {executor} from "@isc-logic-flow/executor";
 import * as metaNodes from "@isc-logic-flow/node-metas";
 import {Button, Tag} from "antd";
-import {useRef, useState} from "react";
-import {allContexts} from "@isc-logic-flow/node-contexts";
+import {useEffect, useRef, useState} from "react";
+import {demoSchema} from "./demoSchema.ts";
 
 function App() {
   const ref = useRef<TreeDesignerRef>(null);
   const [source, setSource] = useState("")
   const [debugObj, setDebugObj] = useState<DebugObj | null>(null)
+  const [schema, setSchema] = useState("")
+  useEffect(() => {
+    const i = setInterval(() => {
+      if (ref.current) {
+        const schema_ = ref.current.exportSchema()
+        setSchema(JSON.stringify(schema_, null, 2))
+        setSource(compiler(schema_, metaNodes))
+      }
+    }, 1500)
+    return () => {
+      clearInterval(i)
+    }
+  }, []);
   return <div style={{height: "100vh"}}>
     <div style={{height: 50, display: "flex", alignItems: "center", paddingInline: "12px"}}>
-      <Button style={{marginRight: 8}} onClick={() => {
-        const schema = ref.current!.exportSchema()
-        setSource(compiler(schema, metaNodes))
-      }}>编译</Button>
       {debugObj ? <><Button style={{marginRight: 8}} onClick={() => {
         debugObj.next().then((d) => {
           if (d.done) {
@@ -31,14 +39,24 @@ function App() {
       }}>调试</Button>}
     </div>
     <div style={{height: "calc(50% - 25px)"}}>
-      <TreeDesigner ref={ref} metas={metaNodes}>
+      <TreeDesigner ref={ref} metas={metaNodes} initialSchema={demoSchema}>
       </TreeDesigner>
     </div>
-    <div style={{height: "calc(50% - 25px)"}}>
-      <div><Tag>编译后代码</Tag></div>
-      <Button onClick={() => executor(source, allContexts)}
-              style={{marginTop: "12px"}}>运行</Button>
-      <pre>{source}</pre>
+    <div style={{height: "calc(50% - 25px)", display: "flex"}}>
+      <div style={{
+        borderRight: "1px solid #ddd",
+        boxSizing: "border-box",
+        height: "100%",
+        width: "50%",
+        overflowY: "auto"
+      }}>
+        <Tag>schema</Tag>
+        <pre>{schema}</pre>
+      </div>
+      <div style={{height: "100%", width: "50%"}}>
+        <Tag>source</Tag>
+        <pre>{source}</pre>
+      </div>
     </div>
   </div>
 }

@@ -125,7 +125,7 @@ export const TreeDesigner = forwardRef<TreeDesignerRef, {
             const props = meta.initialProps?.() || {}
             const newNode: SchemaNode = {
               key: uuid(),
-              title: <>{meta.title}</>,
+              title: meta.title as string,
               nodeName: meta.name,
               props,
               children: meta.initialChildren?.(props) || []
